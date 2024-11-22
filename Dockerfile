@@ -1,21 +1,21 @@
-# Use a Python base image
 FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED 1
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    gcc \
+    && apt-get clean
 
-# Create and set the working directory
+# Install Python dependencies
 WORKDIR /app
-
-# Copy the requirements file first to install dependencies
 COPY requirements-dev-all.txt /app/
-
-# Install dependencies
 RUN pip install --upgrade pip setuptools \
     && pip install -r requirements-dev-all.txt
 
-# Copy the rest of the application files into the container
+# Copy application files
 COPY . /app/
 
-# Set the command to run your bot (adjust the entry point as needed)
+# Command to run your bot
 CMD ["python", "bot.py"]
