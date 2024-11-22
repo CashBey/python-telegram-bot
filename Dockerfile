@@ -8,14 +8,20 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && apt-get clean
 
-# Install Python dependencies
-WORKDIR /app
-COPY requirements-dev-all.txt /app/
-RUN pip install --upgrade pip setuptools \
-    && pip install -r requirements-dev-all.txt
+# Upgrade pip and setuptools before installing dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools
 
-# Copy application files
+# Set the working directory
+WORKDIR /app
+
+# Copy the requirements file
+COPY requirements-dev-all.txt /app/
+
+# Install dependencies from the requirements file
+RUN pip install --no-cache-dir -r requirements-dev-all.txt
+
+# Copy the rest of the application files
 COPY . /app/
 
-# Command to run your bot
+# Set the command to run your bot
 CMD ["python", "bot.py"]
